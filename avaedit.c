@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
 		printf("New adr: %p\n", ap);
 		void* dest = memcpy(ap, p.title, p.size);
 		size_t file_size = write(p.file_descr, ap, p.size);	
-		printf("Dest: %p\tFile size: %dz\n", dest, file_size);
+		printf("Dest: %p\tFile size: %ld\n", dest, file_size);
 		if (ava_init(&p) != 0) {
 			printf("\nОшибка инициализации %s\n",argv[1]);
 			return -1;

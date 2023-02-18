@@ -34,7 +34,7 @@ void prnFix(char* pt, int size, int step) {
 		for(int i = 0; i < step-l1; i++) printf(" ");
 	}
 	else {
-		char tmp[l1];
+		char tmp[l1 + 1];
 		strcpy(tmp, pt);
 		tmp[size] = 0;
 		printf("%s", utf(tmp));

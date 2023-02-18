@@ -94,8 +94,8 @@ int main(int argc, char** argv) {
 				return -1;
 				}
 			else {
-				printf("Size of ava_title: %z\n", sizeof(ava_title));
-				printf("Size of ava_setting: %d\n", sizeof(ava_setting));
+				printf("Size of ava_title: %ld\n", sizeof(ava_title));
+				printf("Size of ava_setting: %ld\n", sizeof(ava_setting));
 				printf("Settings_count: %d\n", p.title->Settings_count);
 				prnAvaTitle(&p);
 				prnAvaMainTitle(&p);
