@@ -319,9 +319,14 @@ rgset* rgsetInit(char* file_name) {
 
 /* Функкция закрытия rgset */
 void rgsetClose(rgset* rp) {
-	free(rp->bin);
+	if (rp != NULL) {
+	if(rp->bin!= NULL) free(rp->bin);
 	if(rp->file_descr != 0) file_close(rp);
+	else {
+		free (rp->title);
+	}	
 	free(rp);
+	}
 };
 
 // Функция определения обобщенного коэфициента канала по его номеру в rgset.dat
@@ -361,8 +366,18 @@ int rgsetDelReg(rgset* pointer, int regNumb) { /* НЕ РЕАЛІЗОВАНО */
 	return -1;
 };
 
-rgset* rgsetNew() { /* НЕ РЕАЛІЗОВАНО */
-	return 0;
+rgset* rgsetNew() { /* НЕ РЕАЛІЗОВАНО */	
+	rgset* rp = malloc(sizeof(rgset));
+	if (rp == NULL) return NULL;
+	memset((void*)rp, 0, sizeof(rgset));
+	rp->title = malloc(sizeof(rgset_title));
+	if (rp->title == NULL) {
+		free (rp);
+		return NULL;
+	}
+	memset((void*)rp->title,0, sizeof(rgset_title));
+	strcpy(rp->title->Version, "21");
+return rp;
 };
 
 int rgsetSave(rgset* pointer, char* filename) { /* НЕ РЕАЛІЗОВАНО */
