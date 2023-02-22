@@ -62,7 +62,7 @@ void prnAvaBin(ava* ap) {
 		printf("----------------------------------------------------\n");
 		CpxGrp cg;
 		for (int i = 0; i < ap->main_title->CountBin; i++) {
-			cg = GrpToCpx((ap->bin+i)->GroupNumb);
+			cg = avaGrpToCpx((ap->bin+i)->GroupNumb);
 			printf("%-4.3d   %-1.1d-%-2.2d   ", (ap->bin+i)->Tact, cg.Matrix, cg.Group );
 			printBits(2, &(ap->bin+i)->Status);
 			printf("\n");
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 	else {
 		ava p;
 		if (file_to_ram(&p, argv[1]) == 0) {
-			if (ava_init(&p) != 0) {
+			if (avaInit(&p) != 0) {
 				printf("\nОшибка открытия %s\n",argv[1]);
 				return -1;
 				}
@@ -100,11 +100,11 @@ int main(int argc, char** argv) {
 				prnAvaTitle(&p);
 				prnAvaMainTitle(&p);
 				prnMatrixBin(p.start_bin);
-				if(ava_bin_init(&p) == 0) {
+				if(avaBinInit(&p) == 0) {
 					prnAvaBin(&p);
-					ava_bin_close(&p);
+					avaBinClose(&p);
 				};
-				ava_close(&p);
+				avaClose(&p);
 				return 0;
 			};
 		}

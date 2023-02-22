@@ -59,17 +59,17 @@ int main(int argc, char** argv) {
 		void* dest = memcpy(ap, p.title, p.size);
 		size_t file_size = write(p.file_descr, ap, p.size);	
 		printf("Dest: %p\tFile size: %ld\n", dest, file_size);
-		if (ava_init(&p) != 0) {
+		if (avaInit(&p) != 0) {
 			printf("\nОшибка инициализации %s\n",argv[1]);
 			return -1;
 			}
 		else {
-			//ava_bin_init(&p);
+			//avaBinInit(&p);
 			//ava_binary_add(&p, 121, 12, 13);
 			//ava_binary_add(&p, 123, 14, 15);
 			//ava_binary_cut(&p, 0, 13, 6);
 			//ava_bin_deinit(&p);
-			ava_close(&p);
+			avaClose(&p);
 		};
 		return 0;
 };

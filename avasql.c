@@ -384,19 +384,19 @@ void avasql(rgset* rp, ava* ap, const char* filename) {
 		
 		// Добавляем записи в таблицы chanel и val (только если до этого была создана новая запиь в таблице events)
 		for(int i = 0; i < ap->main_title->CountChanel; i++) { // Для каждого канала в файле аварии
-			int j = findChNumb(rp, ap, i);// номер канала в файле rgset.dat
+			int j = avaFindChNumb(rp, ap, i);// номер канала в файле rgset.dat
 			if (j != -1) {
 				int	id_channel = sql_add_channel(db, utf((rp->chanel+j)->Name), utf2((rp->chanel+j)->SymbolPrimCircuit), id_reg);
 				find_extremum(ap->chanel+i*ap->main_title->CountTacts, ap->main_title->CountTacts, period, &ext);
 				if(j < rp->title->CountChanel) {
-					float k = fabsf(mainratio(rp, findChNumb(rp, ap, i)));// Определяем обобщенный коэфициент
+					float k = fabsf(mainratio(rp, avaFindChNumb(rp, ap, i)));// Определяем обобщенный коэфициент
 					sql_add_val(db, ext.before*k, ext.min*k, ext.max*k, ext.z_min*k/0.7071, ext.z_max*k/0.7071, id_event, id_channel);
 				};
 			};
 		};
 		
 		// Добавляем запись в таблицы binarys и operates (только если до этого была создана новая запись в таблице events)
-		if (ava_bin_init(ap) == 0) { // Инициализация двоичных данных
+		if (avaBinInit(ap) == 0) { // Инициализация двоичных данных
 			list* ls = ap->list_bin_i;
 			while(ls->prev) ls = ls->prev;
 			int i,t;
@@ -415,7 +415,7 @@ void avasql(rgset* rp, ava* ap, const char* filename) {
 				sql_add_operate(db, (int)(d->Tact/t), d->Status, id_binary, id_event);
 				ls = ls->next;
 			};
-			ava_bin_close(ap);
+			avaBinClose(ap);
 		};
 	};
 sqlite3_close(db);

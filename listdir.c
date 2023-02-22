@@ -68,10 +68,10 @@ int listdir(const char* path, void (*processor)(rgset* rp, ava* ap, const char* 
 				// Определение полного пути
 				mk_full_path(path, entry, newpath);
 				if(file_to_ram(&ap, newpath) == 0) {
-					if(ava_init(&ap) == 0) {
+					if(avaInit(&ap) == 0) {
 						//printf("\nФайл аварии: %s\n",newpath);
 						processor(rp, &ap, newpath);
-						ava_close(&ap);
+						avaClose(&ap);
 					};
 			
 				};

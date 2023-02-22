@@ -39,13 +39,13 @@ int main(int argc, char** argv) {
 		p.size = filesize(argv[1]); // Определение размера файла
 		p.title = Malloc(p.size + sizeof(ava_bin)); // Выделение памяти под файл
 		Read(p.file_descr, p.title, p.size); // Загрузка файла в память	
-		if (ava_init(&p) != 0) {
+		if (avaInit(&p) != 0) {
 			printf("\nОшибка инициализации %s\n",argv[1]);
 			return -1;
 			}
 		else {
 			close(p.file_descr);
-			ava_bin_init(&p);
+			avaBinInit(&p);
 			//ava_binary_add(&p, 121, 12, 13);
 			//ava_binary_add(&p, 123, 14, 15);
 			ava_binary_cut(&p, 121, 12, 13);

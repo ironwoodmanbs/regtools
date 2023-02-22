@@ -28,7 +28,7 @@ void avaprint(rgset* rp, ava* ap, const char* filename) {
 	printf("-----------------------------------------------------------------------------------\n");
 	for(int i = 0; i < ap->main_title->CountChanel; i++) { // Для каждого канала в файле аварии
 		find_extremum(ap->chanel+i*ap->main_title->CountTacts, ap->main_title->CountTacts, period, &ext);
-		j = findChNumb(rp, ap, i);// Определяе номер нашего канала в файле rgset.dat
+		j = avaFindChNumb(rp, ap, i);// Определяе номер нашего канала в файле rgset.dat
 		if(j < rp->title->CountChanel) {
 			k = fabsf(mainratio(rp, j));// Определяем обобщенный коэфициент
 			// Вывод результатов
@@ -43,7 +43,7 @@ void avaprint(rgset* rp, ava* ap, const char* filename) {
 		};
 	};
 
-	if (ava_bin_init(ap) == 0) { // Инициализация двоичных данных
+	if (avaBinInit(ap) == 0) { // Инициализация двоичных данных
 //		list* ls = ap->list_bin_i;
 		int i,t;
 		if(findperiod(rp) == 40) t = 2; else t = 1;
@@ -67,7 +67,7 @@ void avaprint(rgset* rp, ava* ap, const char* filename) {
 			printf("%-1.1d\n", d->Status);
 //			ls = ls->next;
 		}
-		ava_bin_close(ap);
+		avaBinClose(ap);
 	};
 };
 int main (int argc, char** argv) {
