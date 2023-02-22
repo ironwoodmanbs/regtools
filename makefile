@@ -1,13 +1,13 @@
 CFLAGS= -Wall -O2 -std=c99 -c -o
 all: rgset.o ava.o calculation.o rgsetpars.o common.o avapars.o list.o listdir.o avaprint.o avasql.o norm.o normpars.o avaedit.o array.o normread.o test_rgset.o
-	gcc -o avasql avasql.o rgset.o ava.o list.o common.o calculation.o listdir.o -lm -lsqlite3
-	gcc -o rgsetpars rgsetpars.o rgset.o common.o
-	gcc -o avapars avapars.o ava.o common.o rgset.o list.o
-	gcc -o avaedit avaedit.o ava.o common.o list.o
-	gcc -o avaprint avaprint.o listdir.o rgset.o ava.o list.o common.o calculation.o -lm
+	gcc -o avasql avasql.o rgset.o ava.o list.o common.o calculation.o array.o listdir.o -lm -lsqlite3
+	gcc -o rgsetpars rgsetpars.o rgset.o common.o array.o
+	gcc -o avapars avapars.o ava.o common.o rgset.o list.o array.o
+	gcc -o avaedit avaedit.o ava.o common.o list.o array.o
+	gcc -o avaprint avaprint.o listdir.o rgset.o ava.o list.o common.o array.o calculation.o -lm 
 	gcc -o normpars normpars.o norm.o common.o
-	gcc -o normread normread.o norm.o common.o rgset.o
-	gcc -o test_rgset test_rgset.o rgset.o common.o
+	gcc -o normread normread.o norm.o common.o rgset.o array.o
+	gcc -o test_rgset test_rgset.o rgset.o common.o array.o
 
 calculation.o: calculation.c
 	gcc $(CFLAGS) calculation.o calculation.c

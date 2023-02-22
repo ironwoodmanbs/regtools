@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include "array.h"
 #include "rgset.h"
 #include "common.h"
 
@@ -342,11 +343,52 @@ int findperiod(rgset* rp) {
 	else return 20;
 };
 
-int rgsetSplit(rgset* p) { /* НЕ РЕАЛІЗОВАНО */
-	return -1;
+int rgsetSplit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
+	 void* tmp = malloc(sizeof(rgset_title));
+	 if (tmp == NULL) 	return -1;
+	 memcpy (tmp, rp->title, sizeof(rgset_title));
+	 rp->title = tmp;
+	
+	 tmp = array_new(rp->title->CountChanel,sizeof(rgset_chanel));
+	 if(tmp == NULL)	return -1;
+	 memcpy(tmp, rp->chanel, sizeof(rgset_chanel)*rp->title->CountChanel);
+	 rp->chanel = tmp;
+	 
+	 tmp = array_new(rp->title->CountLine,sizeof(rgset_line));
+	 if(tmp == NULL)	return -1;
+	 memcpy(tmp, rp->line, sizeof(rgset_line)*rp->title->CountLine);
+	 rp->line = tmp;
+	 
+	 tmp = array_new(rp->title->CountReg,sizeof(rgset_reg));
+	 if(tmp == NULL)	return -1;
+	 memcpy(tmp, rp->reg, sizeof(rgset_reg)*rp->title->CountReg);
+	 rp->reg = tmp;
+	 
+	 tmp = array_new(rp->title->CountBinSignal,sizeof(rgset_bin));
+	 if(tmp == NULL)	return -1;
+	 memcpy(tmp, rp->bin, sizeof(rgset_bin)*rp->title->CountBinSignal);
+	 rp->bin = tmp;
+	 
+	 tmp = array_new(rp->title->CountMarkBinSignal,sizeof(rgset_mark));
+	 if(tmp == NULL)	return -1;
+	 memcpy(tmp, rp->mark, sizeof(rgset_mark)*rp->title->CountMarkBinSignal);
+	 rp->mark = tmp;
+	 
+	  tmp = array_new(rp->title->CountLineSect,sizeof(rgset_linesect));
+	 if(tmp == NULL)	return -1;
+	 memcpy(tmp, rp->linesect, sizeof(rgset_linesect)*rp->title->CountLineSect);
+	 rp->linesect = tmp;
+	 
+	 tmp = array_new(rp->title->CountSwich,sizeof(rgset_swich));
+	 if(tmp == NULL)	return -1;
+	 memcpy(tmp, rp->swich, sizeof(rgset_swich)*rp->title->CountSwich);
+	 rp->swich = tmp;
+	//file_close(rp);
+	rp->file_descr = 0;
+	return 0;
 };
 
-		int rgsetUnit(rgset* p) { /* НЕ РЕАЛІЗОВАНО */
+		int rgsetUnit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
 	return -1;
 };
 
