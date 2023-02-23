@@ -377,6 +377,7 @@ typedef struct rgset_protectionzonesectionallylinear {
 typedef struct rgset{
 	int file_descr;	// Файловый дискриптор [Всегда первый в структуре]
 	long int size;	// Размер файла [Всегда второй в структуре]
+	void* file_pointer;
 	rgset_title* title; // Указатель на заголовок [Всегда третий в структуре]
 	rgset_chanel* chanel;
 	rgset_line* line;

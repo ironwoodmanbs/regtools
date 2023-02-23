@@ -7,29 +7,30 @@
 
 int main(int argc, char** argv) {
 	
-	//printf("%s" , argv[1]);	
-	rgset* p = rgsetInit(argv[1]);
-	if(p != NULL) 
-			prnRgsetAll(p);
-			
-	 printf("\nПЕРЕВІРКА rgsetSplit()\t");
-	printf("-----------------------------------------------------------------1234\n");
-
-	 if(rgsetSplit(p) == -1) {
-		 printf("ERROR\n");
-		 	return -1;
-	};
-		prnRgsetAll(p);
+		
+	rgset* rp = rgsetInit(argv[1]);
+	if(rp != NULL) 		prnRgsetAll(rp);			
 	
+			
+	printf("\nПЕРЕВІРКА rgsetSplit()\t");
+	printf("-----------------------------------------------------------------1234\n");
+	 if(rgsetSplit(rp) == -1) {
+		 printf("ERROR\n");
+		 return -1;
+	};
+	prnRgsetAll(rp);	
 	printf("OK\n");
-	 
+	
+			
+	
 	printf("\nПЕРЕВІРКА rgsetNew()\t");
-	rgset* rp = rgsetNew();
+	 rp = rgsetNew();
 	if(rp == NULL) {
 		printf("ERROR\n");
 		return -1;
 	};
-	printf("OK\n");
+	printf("OK\n");	
+	 
 
 	printf("\nПЕРЕВІРКА rgsetAddReg()\t");
 	if(rgsetAddReg(rp, 0) == -1) {

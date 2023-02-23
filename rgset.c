@@ -294,9 +294,10 @@ rgset* rgsetInit(char* file_name) {
 		return NULL;
 	};
 	rp->bin = NULL;	
-
+	
 	char vers[] = "21";
 	if	(file_to_ram(rp, file_name) == 0){
+		rp->title = rp->file_pointer;
 		if(!strstr((rp->title)->Version, vers)) { 
 			printf("Версия rgset.dat отличается от 21\n");
 			return NULL;
@@ -343,7 +344,7 @@ int findperiod(rgset* rp) {
 	else return 20;
 };
 
-int rgsetSplit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
+int rgsetSplit(rgset* rp) { 
 	 void* tmp = malloc(sizeof(rgset_title));
 	 if (tmp == NULL) 	return -1;
 	 memcpy (tmp, rp->title, sizeof(rgset_title));
@@ -381,9 +382,9 @@ int rgsetSplit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
 	 
 	 tmp = array_new(rp->title->CountSwich,sizeof(rgset_swich));
 	 if(tmp == NULL)	return -1;
-	 memcpy(tmp, rp->swich, sizeof(rgset_swich)*rp->title->CountSwich);
+	 memcpy(tmp, rp->swich, sizeof(rgset_swich)*rp->title->CountSwich);	
 	 rp->swich = tmp;
-	//file_close(rp);
+	 file_close(rp);
 	rp->file_descr = 0;
 	return 0;
 };
