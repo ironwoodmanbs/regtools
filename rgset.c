@@ -393,39 +393,46 @@ int rgsetSplit(rgset* rp) {
 	return -1;
 };
 
-int rgsetAddChanel(rgset* pointer, int chNumb) { 
-	pointer->title->CountChanel++;
-	pointer->chanel = array_add((void*)pointer->chanel, chNumb , 1);
-	
-	return 0;
-};
-
-int rgsetDelChanel(rgset* pointer, int chNumb) { 
-	if (pointer->title->CountChanel < 1) {
-		printf("Неможливо видалити (канали відсутні)");
+int rgsetAddChanel(rgset* rp, int chNumb) { 
+	void* tmp = array_add(rp->chanel, chNumb , 1);
+	if (tmp == NULL) {
+		printf("ПОМИЛКА: Пам'ять для нового каналу не виділена\n");
 		return -1;
-	}
-	else
-	pointer->title->CountChanel--;
-	pointer->chanel = array_cut((void*)pointer->chanel, chNumb, 1);
-
+	};
+	rp->chanel = tmp;
+	rp->title->CountChanel++;
 	return 0;
 };
 
-int rgsetAddReg(rgset* pointer, int regNumb) {//не реалізовано
-	//pointer->title->CountReg++; 
-	//pointer->reg = array_add((void*)pointer->reg, regNumb , 1);
+int rgsetDelChanel(rgset* rp, int chNumb) { 
+	if (rp->title->CountChanel < 1) {
+		printf("ПОМИЛКА: Неможливо видалити (канали відсутні)\n");
+		return -1;
+	};
+	void* tmp = array_cut(rp->chanel, chNumb , 1);
+	if (tmp == NULL) {
+		printf("ПОМИЛКА: Пам'ять для нового каналу не виділена\n");
+		return -1;
+	};
+	rp->chanel = tmp;
+	rp->title->CountChanel--;
+	return 0;
+};
+
+int rgsetAddReg(rgset* rp, int regNumb) {//не реалізовано
+	//rp->title->CountReg++; 
+	//rp->reg = array_add((void*)rp->reg, regNumb , 1);
 	return -1;
 };
 
-int rgsetDelReg(rgset* pointer, int regNumb) { // не реалізовано
-	//if (pointer->title->CountReg < 1) {
+int rgsetDelReg(rgset* rp, int regNumb) { // не реалізовано
+	//if (rp->title->CountReg < 1) {
 		//printf("Неможливо видалити (регістратори відсутні)");
 		//return -1;
 	//}
 	//else
-	//pointer->title->CountReg--;
-	//pointer->reg = array_cut((void*)pointer->reg, regNumb , 1);
+	//rp->title->CountReg--;
+	//rp->reg = array_cut((void*)rp->reg, regNumb , 1);
 	return -1;
 };
 
@@ -443,7 +450,7 @@ rgset* rgsetNew() {
 return rp;
 };
 
-int rgsetSave(rgset* pointer, char* filename) { /* НЕ РЕАЛІЗОВАНО */
+int rgsetSave(rgset* rp, char* filename) { /* НЕ РЕАЛІЗОВАНО */
 	return 0;
 };
 

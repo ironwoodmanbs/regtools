@@ -1,6 +1,7 @@
 /* test_rgset.c */
 /* Це файл для автоматичного тестування функцій  rgset.c */
 #include <stdio.h>
+#include <string.h>
 #include <stdint.h>
 #include "common.h"
 #include "rgset.h"
@@ -22,9 +23,22 @@ int main(int argc, char** argv) {
 	printf("OK\n");
 	
 	
-		printf("-----------------------------------------------------------------------------------------------\n");
+	printf("-----------------------------------------------------------------------------------------------\n");
+	
 	printf("\nПЕРЕВІРКА rgsetAddChanel()\t");	
-	if(rgsetAddChanel(rp,100) == 0) printf ("OK\n");	
+	if(rgsetAddChanel(rp, rp->title->CountChanel) == -1) {
+		printf("ERROR\n");
+		return -1;
+	}
+	printf ("OK\n");
+ 	strcpy(rp->chanel[rp->title->CountChanel - 1].Name, "Name of new channel");
+ 	strcpy(rp->chanel[rp->title->CountChanel - 1].SymbolChanel, "NewChanel");
+ 	strcpy(rp->chanel[rp->title->CountChanel - 1].SymbolPrimCircuit, "kPopugay");
+ 	strcpy(rp->chanel[rp->title->CountChanel - 1].SymbolSecondCircuit, "Popugay");
+	rp->chanel[rp->title->CountChanel - 1].ChNumber = 123;
+	rp->chanel[rp->title->CountChanel - 1].LineNumber = 12;
+	rp->chanel[rp->title->CountChanel - 1].RegNumber = 1;
+
 	prnRgsetAll(rp);
 	
 	printf("\nПЕРЕВІРКА rgsetNew()\t");

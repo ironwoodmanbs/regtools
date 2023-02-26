@@ -68,7 +68,7 @@ install:
 	
 
 clear:
-	rm *.o avasql rgsetpars avapars avaprint normpars
+	rm *.o avasql rgsetpars avapars avaprint normpars avaedit test_rgset normread
 
 tr:
 	./test_rgset
