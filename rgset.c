@@ -393,23 +393,43 @@ int rgsetSplit(rgset* rp) {
 	return -1;
 };
 
-int rgsetAddChanel(rgset* pointer, int chNumb) { /* НЕ РЕАЛІЗОВАНО */
+int rgsetAddChanel(rgset* pointer, int chNumb) { 
+	pointer->title->CountChanel++;
+	pointer->chanel = array_add((void*)pointer->chanel, chNumb , 1);
+	
+	return 0;
+};
+
+int rgsetDelChanel(rgset* pointer, int chNumb) { 
+	if (pointer->title->CountChanel < 1) {
+		printf("Неможливо видалити (канали відсутні)");
+		return -1;
+	}
+	else
+	pointer->title->CountChanel--;
+	pointer->chanel = array_cut((void*)pointer->chanel, chNumb, 1);
+
+	return 0;
+};
+
+int rgsetAddReg(rgset* pointer, int regNumb) {//не реалізовано
+	//pointer->title->CountReg++; 
+	//pointer->reg = array_add((void*)pointer->reg, regNumb , 1);
 	return -1;
 };
 
-int rgsetDelChanel(rgset* pointer, int chNumb) { /* НЕ РЕАЛІЗОВАНО */
+int rgsetDelReg(rgset* pointer, int regNumb) { // не реалізовано
+	//if (pointer->title->CountReg < 1) {
+		//printf("Неможливо видалити (регістратори відсутні)");
+		//return -1;
+	//}
+	//else
+	//pointer->title->CountReg--;
+	//pointer->reg = array_cut((void*)pointer->reg, regNumb , 1);
 	return -1;
 };
 
-int rgsetAddReg(rgset* pointer, int regNumb) {/* НЕ РЕАЛІЗОВАНО */
-	return -1;
-};
-
-int rgsetDelReg(rgset* pointer, int regNumb) { /* НЕ РЕАЛІЗОВАНО */
-	return -1;
-};
-
-rgset* rgsetNew() { /* НЕ РЕАЛІЗОВАНО */	
+rgset* rgsetNew() { 	
 	rgset* rp = malloc(sizeof(rgset));
 	if (rp == NULL) return NULL;
 	memset((void*)rp, 0, sizeof(rgset));
