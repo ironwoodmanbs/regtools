@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 	rgset* rp = rgsetInit(argv[1]);
 	if(rp != NULL) 		prnRgsetAll(rp);			
 	
-			
+	
 	printf("\nПЕРЕВІРКА rgsetSplit()\t");
 	printf("-----------------------------------------------------------------1234\n");
 	 if(rgsetSplit(rp) == -1) {
@@ -21,7 +21,11 @@ int main(int argc, char** argv) {
 	prnRgsetAll(rp);	
 	printf("OK\n");
 	
-			
+	
+		printf("-----------------------------------------------------------------------------------------------\n");
+	printf("\nПЕРЕВІРКА rgsetAddChanel()\t");	
+	if(rgsetAddChanel(rp,100) == 0) printf ("OK\n");	
+	prnRgsetAll(rp);
 	
 	printf("\nПЕРЕВІРКА rgsetNew()\t");
 	 rp = rgsetNew();
