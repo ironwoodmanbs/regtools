@@ -395,6 +395,15 @@ int rgsetSplit(rgset* rp) {
 
 int rgsetAddChanel(rgset* rp, int chNumb) { 
 	if (rp->file_descr != 0) rgsetSplit(rp);
+	if (rp->chanel == NULL){
+		rp->chanel = array_new(1, sizeof(rgset_chanel));
+		if (rp->chanel == NULL) {
+			printf("ПОМИЛКА: Пам'ять для нового каналу не виділена\n");
+			return -1;
+			}
+			rp->title->CountChanel = 1;
+	}
+	else {
 	void* tmp = array_add(rp->chanel, chNumb , 1);
 	if (tmp == NULL) {
 		printf("ПОМИЛКА: Пам'ять для нового каналу не виділена\n");
@@ -402,11 +411,16 @@ int rgsetAddChanel(rgset* rp, int chNumb) {
 	};
 	rp->chanel = tmp;
 	rp->title->CountChanel++;
+	}
 	return 0;
 };
 
 int rgsetDelChanel(rgset* rp, int chNumb) { 
 	if (rp->file_descr != 0) rgsetSplit(rp);
+	if (rp->chanel == NULL){
+		printf("ПОМИЛКА: Неможливо видалити (канали відсутні)");
+		return -1;
+		}
 	if (rp->title->CountChanel < 1) {
 		printf("ПОМИЛКА: Неможливо видалити (канали відсутні)\n");
 		return -1;
@@ -423,25 +437,39 @@ int rgsetDelChanel(rgset* rp, int chNumb) {
 
 int rgsetAddReg(rgset* rp, int regNumb) {
 	if (rp->file_descr != 0) rgsetSplit(rp);
+	if (rp->reg == NULL) {
+		rp->reg = array_new(1, sizeof(rgset_reg));
+		if (rp->reg == NULL) {
+			printf("ПОМИЛКА: Пам'ять для нового реєстратору не виділена\n");
+			return -1;
+			}
+			rp->title->CountReg = 1;
+		} 
+		else {
 	void* tmp = array_add(rp->reg, regNumb, 1);
 	if (tmp == NULL) {
-		printf("ПОМИЛКА: Пам'ять для нового регістратору не виділена\n");
+		printf("ПОМИЛКА: Пам'ять для нового реєстратору не виділена\n");
 		return -1;
-	};
+		};
 	rp->reg = tmp;
-	rp->title->CountReg++;
-	return 0;
+	rp->title->CountReg++;	
+	}
+return 0;
 };
 
 int rgsetDelReg(rgset* rp, int regNumb) {
 	if (rp->file_descr != 0) rgsetSplit(rp);
+	if (rp->reg == NULL){
+		printf("ПОМИЛКА: Неможливо видалити (реєстратори відсутні)");
+		return -1;
+		}
 	if (rp->title->CountReg < 1) {
-		printf("ПОМИЛКА: Неможливо видалити (регістратори відсутні)");
+		printf("ПОМИЛКА: Неможливо видалити (реєстратори відсутні)");
 		return -1;
 	}	
 	void* tmp = array_cut(rp->reg, regNumb , 1);
 	if (tmp == NULL) {
-		printf("ПОМИЛКА: Пам'ять для  регістратору не була видалена\n");
+		printf("ПОМИЛКА: Пам'ять для  реєстратору не була видалена\n");
 		return -1;
 	}
 	rp->reg = tmp;
