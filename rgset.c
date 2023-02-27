@@ -394,6 +394,7 @@ int rgsetSplit(rgset* rp) {
 };
 
 int rgsetAddChanel(rgset* rp, int chNumb) { 
+	if (rp->file_descr != 0) rgsetSplit(rp);
 	void* tmp = array_add(rp->chanel, chNumb , 1);
 	if (tmp == NULL) {
 		printf("ПОМИЛКА: Пам'ять для нового каналу не виділена\n");
@@ -405,13 +406,14 @@ int rgsetAddChanel(rgset* rp, int chNumb) {
 };
 
 int rgsetDelChanel(rgset* rp, int chNumb) { 
+	if (rp->file_descr != 0) rgsetSplit(rp);
 	if (rp->title->CountChanel < 1) {
 		printf("ПОМИЛКА: Неможливо видалити (канали відсутні)\n");
 		return -1;
 	};
 	void* tmp = array_cut(rp->chanel, chNumb , 1);
 	if (tmp == NULL) {
-		printf("ПОМИЛКА: Пам'ять для нового каналу не виділена\n");
+		printf("ПОМИЛКА: Пам'ять для каналу не була видалена\n");
 		return -1;
 	};
 	rp->chanel = tmp;
@@ -419,21 +421,32 @@ int rgsetDelChanel(rgset* rp, int chNumb) {
 	return 0;
 };
 
-int rgsetAddReg(rgset* rp, int regNumb) {//не реалізовано
-	//rp->title->CountReg++; 
-	//rp->reg = array_add((void*)rp->reg, regNumb , 1);
-	return -1;
+int rgsetAddReg(rgset* rp, int regNumb) {
+	if (rp->file_descr != 0) rgsetSplit(rp);
+	void* tmp = array_add(rp->reg, regNumb, 1);
+	if (tmp == NULL) {
+		printf("ПОМИЛКА: Пам'ять для нового регістратору не виділена\n");
+		return -1;
+	};
+	rp->reg = tmp;
+	rp->title->CountReg++;
+	return 0;
 };
 
-int rgsetDelReg(rgset* rp, int regNumb) { // не реалізовано
-	//if (rp->title->CountReg < 1) {
-		//printf("Неможливо видалити (регістратори відсутні)");
-		//return -1;
-	//}
-	//else
-	//rp->title->CountReg--;
-	//rp->reg = array_cut((void*)rp->reg, regNumb , 1);
-	return -1;
+int rgsetDelReg(rgset* rp, int regNumb) {
+	if (rp->file_descr != 0) rgsetSplit(rp);
+	if (rp->title->CountReg < 1) {
+		printf("ПОМИЛКА: Неможливо видалити (регістратори відсутні)");
+		return -1;
+	}	
+	void* tmp = array_cut(rp->reg, regNumb , 1);
+	if (tmp == NULL) {
+		printf("ПОМИЛКА: Пам'ять для  регістратору не була видалена\n");
+		return -1;
+	}
+	rp->reg = tmp;
+	rp->title->CountReg--;
+	return 0;
 };
 
 rgset* rgsetNew() { 	
