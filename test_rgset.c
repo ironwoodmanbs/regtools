@@ -38,16 +38,10 @@ int main(int argc, char** argv) {
 	rp->chanel[rp->title->CountChanel - 1].ChNumber = 123;
 	rp->chanel[rp->title->CountChanel - 1].LineNumber = 12;
 	rp->chanel[rp->title->CountChanel - 1].RegNumber = 1;
-
-	prnRgsetAll(rp);
+	prnRgsetTitle (rp);
+	prnRgsetChanel(rp);
 	
-	printf("\nПЕРЕВІРКА rgsetNew()\t");
-	 rp = rgsetNew();
-	if(rp == NULL) {
-		printf("ERROR\n");
-		return -1;
-	};
-	printf("OK\n");	
+
 	 
 
 	printf("\nПЕРЕВІРКА rgsetAddReg()\t");
@@ -56,7 +50,8 @@ int main(int argc, char** argv) {
 		return -1;
 	}; 
 	printf("OK\n");
-
+	prnRgsetTitle (rp);
+	prnRgsetReg(rp);
 	
 	printf("\nПЕРЕВІРКА rgsetAddChanel()\t");
 	if(rgsetAddChanel(rp, 0) == -1) {
@@ -78,6 +73,14 @@ int main(int argc, char** argv) {
 		return -1;
 	};
 		printf("OK\n");
+		
+	printf("\nПЕРЕВІРКА rgsetNew()\t");
+	 rp = rgsetNew();
+	if(rp == NULL) {
+		printf("ERROR\n");
+		return -1;
+	};
+	printf("OK\n");	
 
 	rgsetClose(rp);
 	return 0;
