@@ -23,23 +23,28 @@ void init_bin_arr(uint16_t* source, rgset_bin* dest, int count) {
 	uint16_t* pt = source;
 	for (int j = 0; j < count; j++) {
 		// Заполнение нулями текстовые поля структуры rgset_bin
-		for (int i = 0; i < 48; i++) bin->Name[i]=0;
-		for (int i = 0; i < 24; i++) bin->Panel[i]=0;
-		for (int i = 0; i < 24; i++) bin->Relay[i]=0;
+		memset(bin->Name, 0 , 96);
+		//for (int i = 0; i < 48; i++) bin->Name[i]=0;
+		//for (int i = 0; i < 24; i++) bin->Panel[i]=0;
+		//for (int i = 0; i < 24; i++) bin->Relay[i]=0;
 		
 		// Копирование имени дискретного сигнала
-		for (int i = 0; i < *pt && i < 47; i++) bin->Name[i] = *(char*)((uintptr_t)pt+2+i);
+		memcpy(bin->Name, (uint16_t*)((uintptr_t)pt+2), *pt);
+		//for (int i = 0; i < *pt && i < 47; i++) bin->Name[i] = *(char*)((uintptr_t)pt+2+i);
 		
 		// Копирование название панели
 		pt=(uint16_t*)((uintptr_t)pt+*pt+2);
-		for (int i = 0; i < *pt && i < 23; i++) bin->Panel[i] = *(char*)((uintptr_t)pt+2+i);
+		memcpy(bin->Panel, (uint16_t*)((uintptr_t)pt+2),*pt);
+		//for (int i = 0; i < *pt && i < 23; i++) bin->Panel[i] = *(char*)((uintptr_t)pt+2+i);
 		
 		// Копирование название реле
 		pt=(uint16_t*)((uintptr_t)pt+*pt+2);
-		for (int i = 0; i < *pt && i < 23; i++) bin->Relay[i] = *(char*)((uintptr_t)pt+2+i);
+		memcpy(bin->Relay,(uint16_t*)((uintptr_t)pt+2), *pt);
+		//for (int i = 0; i < *pt && i < 23; i++) bin->Relay[i] = *(char*)((uintptr_t)pt+2+i);
 		
 		// Копирование цифровых данных (Номер сигнала, номер регистратора, Тип сигнала, Флаг)
 		pt=(uint16_t*)((uintptr_t)pt+*pt+2);
+		//memcpy(bin->Numb,(uint16_t*)((uintptr_t)pt),4);
 		bin->Numb = *pt; pt++;
 		bin->Reg = *pt; pt++;
 		bin->Type = *pt; pt++;
