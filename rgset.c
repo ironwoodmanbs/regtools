@@ -18,37 +18,27 @@ source - указатель на участок памяти (образ фай�
 destin - указатель на участок памяти куда производится копирование
 информации (д.б. типа grset_bin*).
 count -  количество считываний */
-void init_bin_arr(uint16_t* source, rgset_bin* dest, int count) {
-	rgset_bin* bin = dest;
-	uint16_t* pt = source;
+void init_bin_arr(uint16_t* pt, rgset_bin* bin, int count) {
+
 	for (int j = 0; j < count; j++) {
 		// Заполнение нулями текстовые поля структуры rgset_bin
 		memset(bin->Name, 0 , 96);
-		//for (int i = 0; i < 48; i++) bin->Name[i]=0;
-		//for (int i = 0; i < 24; i++) bin->Panel[i]=0;
-		//for (int i = 0; i < 24; i++) bin->Relay[i]=0;
 		
 		// Копирование имени дискретного сигнала
-		memcpy(bin->Name, (uint16_t*)((uintptr_t)pt+2), *pt);
-		//for (int i = 0; i < *pt && i < 47; i++) bin->Name[i] = *(char*)((uintptr_t)pt+2+i);
+		memcpy(bin->Name, pt+1, *pt);
 		
 		// Копирование название панели
 		pt=(uint16_t*)((uintptr_t)pt+*pt+2);
-		memcpy(bin->Panel, (uint16_t*)((uintptr_t)pt+2),*pt);
-		//for (int i = 0; i < *pt && i < 23; i++) bin->Panel[i] = *(char*)((uintptr_t)pt+2+i);
+		memcpy(bin->Panel, pt+1,*pt);
 		
 		// Копирование название реле
 		pt=(uint16_t*)((uintptr_t)pt+*pt+2);
-		memcpy(bin->Relay,(uint16_t*)((uintptr_t)pt+2), *pt);
-		//for (int i = 0; i < *pt && i < 23; i++) bin->Relay[i] = *(char*)((uintptr_t)pt+2+i);
+		memcpy(bin->Relay,pt+1, *pt);
 		
 		// Копирование цифровых данных (Номер сигнала, номер регистратора, Тип сигнала, Флаг)
 		pt=(uint16_t*)((uintptr_t)pt+*pt+2);
-		//memcpy(bin->Numb,(uint16_t*)((uintptr_t)pt),4);
-		bin->Numb = *pt; pt++;
-		bin->Reg = *pt; pt++;
-		bin->Type = *pt; pt++;
-		bin->Flag = *pt; pt++;
+		memcpy(&bin->Numb,pt,8);
+		pt=pt+4;
 		bin++;
 	};
 }
@@ -311,7 +301,7 @@ rgset* rgsetInit(char* file_name) {
 				rp->chanel = (rgset_chanel*)((rp->title)->OffsetChanel+(uintptr_t)rp->title);
 			rp->line = (rgset_line*)(rp->title->OffsetLine+(uintptr_t)rp->title);
 			rp->reg =(rgset_reg*)(rp->title->OffsetReg+(uintptr_t)rp->title);
-			rp->bin = (rgset_bin*)Malloc(sizeof(rgset_bin)*rp->title->CountBinSignal);
+			rp->bin = array_new(rp->title->CountBinSignal, sizeof(rgset_bin));
 			if (rp->bin != NULL) init_bin_arr((uint16_t*)(rp->title->OffsetBin+(uintptr_t)rp->title), rp->bin, rp->title->CountBinSignal);
 			else printf("Memory for binary signals is not allocated\n");
 			rp->mark = (rgset_mark*)(rp->title->OffsetMark+(uintptr_t)rp->title);
@@ -394,8 +384,14 @@ int rgsetSplit(rgset* rp) {
 	return 0;
 };
 
-		int rgsetUnit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
-	return -1;
+int rgsetUnit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
+		// Вирахування потібного розміру для запаковки структури rgsetbin
+		unsigned int sizeBin = 0;
+			for (int i = 0; i < array_count(rp->bin); i++) {
+			sizeBin = sizeBin + strlen((rp->bin+i)->Name)+strlen((rp->bin+i)->Panel)+strlen((rp->bin+i)->Relay)+14;
+			}
+	return 0;
+	
 };
 
 int rgsetAddChanel(rgset* rp, int chNumb) { 
