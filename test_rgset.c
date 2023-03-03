@@ -81,6 +81,14 @@ int main(int argc, char** argv) {
 		return -1;
 	};
 	printf("OK\n");	
+	
+	
+	printf("\n Перевірка rgsetUnit()\t");
+	if (rgsetUnit(rp) == -1) {
+		printf("ERROR\n");
+		return -1;
+	};
+	printf ("OK\n"); 
 
 	rgsetClose(rp);
 	return 0;
