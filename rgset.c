@@ -317,7 +317,7 @@ rgset* rgsetInit(char* file_name) {
 /* Функкция закрытия rgset */
 void rgsetClose(rgset* rp) {
 	if (rp != NULL) {
-	if(rp->bin!= NULL) free(rp->bin);
+	if(rp->bin!= NULL) array_free(rp->bin);
 	if(rp->file_descr != 0) file_close(rp);
 	else {
 		free (rp->title);
@@ -360,10 +360,10 @@ int rgsetSplit(rgset* rp) {
 	 memcpy(tmp, rp->reg, sizeof(rgset_reg)*rp->title->CountReg);
 	 rp->reg = tmp;
 	 
-	 tmp = array_new(rp->title->CountBinSignal,sizeof(rgset_bin));
-	 if(tmp == NULL)	return -1;
-	 memcpy(tmp, rp->bin, sizeof(rgset_bin)*rp->title->CountBinSignal);
-	 rp->bin = tmp;
+	 //tmp = array_new(rp->title->CountBinSignal,sizeof(rgset_bin));
+	 //if(tmp == NULL)	return -1;
+	 //memcpy(tmp, rp->bin, sizeof(rgset_bin)*rp->title->CountBinSignal);
+	 //rp->bin = tmp;
 	 
 	 tmp = array_new(rp->title->CountMarkBinSignal,sizeof(rgset_mark));
 	 if(tmp == NULL)	return -1;
@@ -387,9 +387,29 @@ int rgsetSplit(rgset* rp) {
 int rgsetUnit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
 		// Вирахування потібного розміру для запаковки структури rgsetbin
 		unsigned int sizeBin = 0;
-			for (int i = 0; i < array_count(rp->bin); i++) {
-			sizeBin = sizeBin + strlen((rp->bin+i)->Name)+strlen((rp->bin+i)->Panel)+strlen((rp->bin+i)->Relay)+14;
-			}
+		for (int i = 0; i < array_count(rp->bin); i++) {
+		sizeBin = sizeBin + strlen((rp->bin+i)->Name)+strlen((rp->bin+i)->Panel)+strlen((rp->bin+i)->Relay)+14;
+		}
+		prnRgsetTitle(rp);
+		rp->title->OffsetChanel=sizeof(rgset_title);
+		rp->title->OffsetLine=sizeof(rgset_title)+sizeof(rgset_chanel)*rp->title->CountChanel;
+		rp->title->OffsetReg=1;
+		rp->title->OffsetBin=1;
+		rp->title->OffsetMark=1;
+		rp->title->OffsetLineSect=1;
+		rp->title->OffsetSwich=1;
+		rp->title->OffsetCircleSettings=1;
+		rp->title->OffsetTableSettings=1;
+		rp->title->OffsetTransmisChanel=1;
+		rp->title->OffsetAutotransformer=1;
+		rp->title->OffsetRelationsLineReg=1;
+		rp->title->OffsetSpecifStageProtection=1;
+		rp->title->OffsetAdditSpecifChanel=1;
+		rp->title->OffsetProtectionZoneSectionallyLinear=1;
+		rp->title->OffsetAdditisData=1;
+		prnRgsetTitle(rp);
+		printf( "%d сигналов \n" , array_count(rp->bin));
+		printf("%d байт  ", sizeBin);
 	return 0;
 	
 };
