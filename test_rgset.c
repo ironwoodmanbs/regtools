@@ -78,6 +78,13 @@ int main(int argc, char** argv) {
 		return -1;
 	};
 	printf ("OK\n"); 
+	
+	printf("\nПеревірка RgsetSave()\t");
+	if (rgsetSave(rp, "newrgset.dat") == -1){
+		printf("ERROR\n");
+		return -1;
+	}
+	printf ("OK\n"); 
 		
 	printf("\nПЕРЕВІРКА rgsetNew()\t");
 	 rp = rgsetNew();

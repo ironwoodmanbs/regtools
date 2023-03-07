@@ -513,7 +513,14 @@ return rp;
 };
 
 int rgsetSave(rgset* rp, char* filename) { /* НЕ РЕАЛІЗОВАНО */
-	return 0;
+	int fd = open(filename, O_WRONLY|O_CREAT, S_IRWXU);
+	if (fd == -1) {
+	printf("помилка створення або відкриття файлу\n");
+	return -1;
+	}
+	write(fd, rp->title, sizeof(rgset_title));
+	close (fd);
+	return 1;
 };
 
 
