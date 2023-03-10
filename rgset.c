@@ -77,10 +77,11 @@ int prnRgsetTitle(rgset* p) {
 		printf("OffsetTransmisChanel                  %d\n",p->title->OffsetTransmisChanel);
 		printf("OffsetAutotransformer                 %d\n",p->title->OffsetAutotransformer);
 		printf("OffsetRecordLineReg                   %d\n",p->title->OffsetRelationsLineReg);
+		printf("OffsetAdditTitle                      %d\n",p->title->OffsetAdditTitle);
 		printf("CountSpecifLineProtection             %d\n",p->title->CountSpecifLineProtection);
-		printf("CountSpecifLineProtection2            %d\n",p->title->CountSpecifLineProtection2);
 		printf("OffsetSpesifLineProtection            %d\n",p->title->OffsetSpesifLineProtection);
 		printf("CountSpecifStageProtection            %d\n",p->title->CountSpecifStageProtection);
+		printf("OffsetSpecifStageProtection           %d\n",p->title->OffsetSpecifStageProtection); 
 		printf("OffsetAdditSpecifProtections          %d\n",p->title->OffsetAdditSpecifChanel);
 		printf("CountProtectionZoneSectionallyLinear  %d\n",p->title->CountProtectionZoneSectionallyLinear);
 		printf("OffsetProtectionZoneSectionallyLinear %d\n",p->title->OffsetProtectionZoneSectionallyLinear);
@@ -386,27 +387,101 @@ int rgsetSplit(rgset* rp) {
 
 int rgsetUnit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
 		// Вирахування потібного розміру для запаковки структури rgsetbin
-		unsigned int sizeBin = 0;
+		unsigned int sizeBin = 0; 
+		unsigned int OffsetSum = 0;
 		for (int i = 0; i < array_count(rp->bin); i++) {
 		sizeBin = sizeBin + strlen((rp->bin+i)->Name)+strlen((rp->bin+i)->Panel)+strlen((rp->bin+i)->Relay)+14;
 		}
 		prnRgsetTitle(rp);
-		rp->title->OffsetChanel=sizeof(rgset_title);
-		rp->title->OffsetLine=sizeof(rgset_title)+sizeof(rgset_chanel)*rp->title->CountChanel;
-		rp->title->OffsetReg=1;
-		rp->title->OffsetBin=1;
-		rp->title->OffsetMark=1;
-		rp->title->OffsetLineSect=1;
-		rp->title->OffsetSwich=1;
-		rp->title->OffsetCircleSettings=1;
-		rp->title->OffsetTableSettings=1;
-		rp->title->OffsetTransmisChanel=1;
-		rp->title->OffsetAutotransformer=1;
-		rp->title->OffsetRelationsLineReg=1;
-		rp->title->OffsetSpecifStageProtection=1;
-		rp->title->OffsetAdditSpecifChanel=1;
-		rp->title->OffsetProtectionZoneSectionallyLinear=1;
-		rp->title->OffsetAdditisData=1;
+		// зсув для каналів
+		if (rp->title->CountChanel !=0){
+			rp->title->OffsetChanel=sizeof(rgset_title);
+			OffsetSum = rp->title->OffsetChanel;
+		}
+		else rp->title->OffsetChanel = 0;		
+		
+		// зсув для ліній
+		if (rp->title->CountLine != 0) {
+			rp->title->OffsetLine = OffsetSum+sizeof(rgset_chanel)*rp->title->CountChanel;
+			OffsetSum =  rp->title->OffsetLine;
+		}
+		else 
+		{
+			rp->title->OffsetLine = 0;
+			OffsetSum = OffsetSum+sizeof(rgset_chanel)*rp->title->CountChanel;
+		}
+		
+		//зсув для реєстраторів
+		if (rp->title->CountReg !=0){
+			rp->title->OffsetReg = OffsetSum+sizeof(rgset_line)*rp->title->CountLine;
+			OffsetSum =  rp->title->OffsetReg;
+		}
+		else {
+			rp->title->OffsetReg = 0;
+			OffsetSum = OffsetSum+sizeof(rgset_line)*rp->title->CountLine;
+		}
+		
+		//зсув для бінарних сигналів
+		if (rp->title->CountBinSignal !=0){
+			rp->title->OffsetBin = OffsetSum+sizeof(rgset_reg)*rp->title->CountReg;		
+			OffsetSum =  rp->title->OffsetBin;
+		}
+		else {
+			rp->title->OffsetBin = 0;
+			OffsetSum = OffsetSum+sizeof(rgset_reg)*rp->title->CountReg;	
+		}
+		
+		//зсув для Mark
+		if (rp->title->CountMarkBinSignal !=0){
+			rp->title->OffsetMark = OffsetSum+sizeBin;		
+			OffsetSum =  rp->title->OffsetMark;
+		}
+		else {
+			rp->title->OffsetMark = 0;
+			OffsetSum=OffsetSum+sizeBin;
+		}
+		// зсув для linesect
+		if (rp->title->CountLineSect !=0){
+			rp->title->OffsetLineSect = OffsetSum+sizeof(rgset_mark)*rp->title->CountMarkBinSignal;		
+			OffsetSum =  rp->title->OffsetLineSect;
+		}
+		else {
+			rp->title->OffsetLineSect = 0;
+			OffsetSum=OffsetSum+sizeof(rgset_mark)*rp->title->CountMarkBinSignal;
+		}
+		
+		//зсув для свіч
+		if (rp->title->CountSwich !=0){
+		rp->title->OffsetSwich = OffsetSum+sizeof(rgset_linesect)*rp->title->CountLineSect;		
+		OffsetSum =  rp->title->OffsetSwich;
+		}
+		else {
+			rp->title->OffsetSwich = 0;
+			OffsetSum= OffsetSum+sizeof(rgset_linesect)*rp->title->CountLineSect;	
+		}
+		
+		rp->title->OffsetAdditTitle=182; // зсув для додаткового заголовку
+		rp->title->OffsetCircleSettings=0;
+		rp->title->OffsetTableSettings=0;
+		rp->title->OffsetTransmisChanel=0;
+		rp->title->OffsetAutotransformer=0;
+		rp->title->OffsetRelationsLineReg=0;
+		rp->title->OffsetSpesifLineProtection=0;
+		rp->title->OffsetSpecifStageProtection=0;
+		rp->title->OffsetAdditSpecifChanel=0;
+		rp->title->OffsetProtectionZoneSectionallyLinear=0;
+		
+		// зсув для резервів
+		rp->title->ReservOffset1=0;
+		rp->title->ReservOffset2=0;
+		rp->title->ReservOffset3=0;
+		rp->title->ReservOffset4=0;
+		rp->title->ReservOffset5=0;
+		rp->title->ReservOffset6=0;
+		rp->title->ReservOffset7=0;
+		rp->title->ReservOffset8=0;
+		rp->title->ReservOffset9=0;
+		rp->title->OffsetAdditisData=0;//зсув для додаткових данних
 		prnRgsetTitle(rp);
 		printf( "%d сигналов \n" , array_count(rp->bin));
 		printf("%d байт  ", sizeBin);
@@ -519,6 +594,9 @@ int rgsetSave(rgset* rp, char* filename) { /* НЕ РЕАЛІЗОВАНО */
 	return -1;
 	}
 	write(fd, rp->title, sizeof(rgset_title));
+	write(fd, rp->chanel, sizeof(rgset_chanel)*rp->title->CountChanel);
+	write(fd, rp->line, sizeof(rgset_line)*rp->title->CountLine);
+	write(fd, rp->reg, sizeof(rgset_reg)*rp->title->CountReg);
 	close (fd);
 	return 1;
 };
