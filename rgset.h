@@ -35,8 +35,9 @@ typedef struct rgset_title { 			// [0 - ???]
 		uint32_t OffsetTransmisChanel;
 		uint32_t OffsetAutotransformer;
 		uint32_t OffsetRelationsLineReg;
+		//uint32_t CountSpecifLineProtection; 
+		uint32_t OffsetAdditTitle;
 		uint32_t CountSpecifLineProtection;
-		uint32_t CountSpecifLineProtection2;
 		uint32_t OffsetSpesifLineProtection;
 		uint32_t CountSpecifStageProtection;
 		uint32_t OffsetSpecifStageProtection;
