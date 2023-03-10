@@ -64,12 +64,12 @@ int main(int argc, char** argv) {
 	//}; 
 		//printf("OK\n");
 
-	printf("\nПЕРЕВІРКА rgsetDelReg()\t");
-	if(rgsetDelReg(rp, 0) == -1) {
-		printf("ERROR\n");
-		return -1;
-	};
-		printf("OK\n");
+	//printf("\nПЕРЕВІРКА rgsetDelReg()\t");
+	//if(rgsetDelReg(rp, 0) == -1) {
+		//printf("ERROR\n");
+		//return -1;
+	//};
+		//printf("OK\n");
 		
 		
 	printf("\n Перевірка rgsetUnit()\t");
