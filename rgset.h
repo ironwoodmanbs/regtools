@@ -224,6 +224,13 @@ typedef struct rgset_swich {
     uint16_t NumChanB;
     uint16_t NumChanC;
     } rgset_swich;
+    
+ typedef struct rgset_circleset {
+ char Name[40];
+ float Radius;
+ float Distance; 
+ float Angle;
+ }rgset_circleset ;   
 
 typedef struct rgset_tableset {
     char Name[40];
@@ -387,6 +394,8 @@ typedef struct rgset{
 	rgset_mark* mark;
 	rgset_linesect* linesect;
 	rgset_swich* swich;
+	rgset_circleset* circleset;
+	rgset_tableset* tableset;
 } rgset;
 
 typedef struct binNum {
@@ -405,6 +414,7 @@ void init_bin_arr(uint16_t* source, rgset_bin* dest, int count); // Протот
 int prnRgsetMark(rgset* p); // Прототип функции вывода типов дискретных сигналов из данных rgset.dat
 int prnRgsetLineSect(rgset* p); // Прототип функции вывода участков линий из данных rgset.dat
 int prnRgsetSwich(rgset* p); // Прототип вывода выключателей из данных rgset.dat
+int prnRgsetCircleset(rgset* p); // Прототип вывода уставок окружностью из данных rgset.dat
 int prnRgsetAll(rgset* p); // Прототип функции вывода всех полей rgset
 
 rgset* rgsetInit(char* filename);
