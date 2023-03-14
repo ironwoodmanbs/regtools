@@ -276,7 +276,7 @@ int prnRgsetAll(rgset* p) {
 		prnRgsetBin(p);
 		prnRgsetMark(p);
 		prnRgsetLineSect(p);
-//		prnRgsetSwich(p);
+		prnRgsetSwich(p);
 	};
 	return 0;
 };
@@ -308,6 +308,8 @@ rgset* rgsetInit(char* file_name) {
 			rp->mark = (rgset_mark*)(rp->title->OffsetMark+(uintptr_t)rp->title);
 			rp->linesect = (rgset_linesect*)(rp->title->OffsetLineSect+(uintptr_t)rp->title);
 			rp->swich = (rgset_swich*)(rp->title->OffsetSwich+(uintptr_t)rp->title);
+			rp->circleset = (rgset_circleset*)(rp->title->OffsetCircleSettings+(uintptr_t)rp->title);
+			rp->tableset = (rgset_tableset*)(rp->title->OffsetTableSettings+(uintptr_t)rp->title);
 			return rp;
 		};
 	}
@@ -360,12 +362,7 @@ int rgsetSplit(rgset* rp) {
 	 if(tmp == NULL)	return -1;
 	 memcpy(tmp, rp->reg, sizeof(rgset_reg)*rp->title->CountReg);
 	 rp->reg = tmp;
-	 
-	 //tmp = array_new(rp->title->CountBinSignal,sizeof(rgset_bin));
-	 //if(tmp == NULL)	return -1;
-	 //memcpy(tmp, rp->bin, sizeof(rgset_bin)*rp->title->CountBinSignal);
-	 //rp->bin = tmp;
-	 
+	 	 
 	 tmp = array_new(rp->title->CountMarkBinSignal,sizeof(rgset_mark));
 	 if(tmp == NULL)	return -1;
 	 memcpy(tmp, rp->mark, sizeof(rgset_mark)*rp->title->CountMarkBinSignal);
@@ -380,92 +377,88 @@ int rgsetSplit(rgset* rp) {
 	 if(tmp == NULL)	return -1;
 	 memcpy(tmp, rp->swich, sizeof(rgset_swich)*rp->title->CountSwich);	
 	 rp->swich = tmp;
+	 
+	 tmp = array_new(rp->title->CountCircleSettings, sizeof(rgset_circleset));
+	 if(tmp == NULL)  return -1;
+	 memcpy(tmp, rp->circleset, sizeof(rgset_circleset)*rp->title->CountCircleSettings);
+	 rp->circleset = tmp;
+	 
+	 tmp = array_new(rp->title->CountTableSettings, sizeof(rgset_tableset));
+	 if(tmp == NULL)  return -1;
+	 memcpy(tmp, rp->tableset, sizeof(rgset_tableset)*rp->title->CountTableSettings);
+	 rp->tableset = tmp;
+	  
 	 file_close(rp);
 	rp->file_descr = 0;
 	return 0;
 };
 
-int rgsetUnit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
-		// Вирахування потібного розміру для запаковки структури rgsetbin
-		unsigned int sizeBin = 0; 
+	// Вирахування потібного розміру для запаковки структури rgsetbin
+unsigned int getSizeBin (rgset* rp ) {
+	unsigned int sizeBin = 0; 
+	for (int i = 0; i < array_count(rp->bin); i++)		sizeBin = sizeBin + strlen((rp->bin+i)->Name)+strlen((rp->bin+i)->Panel)+strlen((rp->bin+i)->Relay)+14;		
+	return sizeBin;
+	};
+	
+	
+int rgsetUnit(rgset* rp) { 		
 		unsigned int OffsetSum = 0;
-		for (int i = 0; i < array_count(rp->bin); i++) {
-		sizeBin = sizeBin + strlen((rp->bin+i)->Name)+strlen((rp->bin+i)->Panel)+strlen((rp->bin+i)->Relay)+14;
-		}
+		unsigned int sizeBin = getSizeBin(rp);
 		prnRgsetTitle(rp);
+		
 		// зсув для каналів
-		if (rp->title->CountChanel !=0){
-			rp->title->OffsetChanel=sizeof(rgset_title);
-			OffsetSum = rp->title->OffsetChanel;
-		}
+		OffsetSum = sizeof(rgset_title);
+		if (rp->title->CountChanel !=0)			rp->title->OffsetChanel=OffsetSum;
 		else rp->title->OffsetChanel = 0;		
 		
-		// зсув для ліній
-		if (rp->title->CountLine != 0) {
-			rp->title->OffsetLine = OffsetSum+sizeof(rgset_chanel)*rp->title->CountChanel;
-			OffsetSum =  rp->title->OffsetLine;
-		}
-		else 
-		{
-			rp->title->OffsetLine = 0;
-			OffsetSum = OffsetSum+sizeof(rgset_chanel)*rp->title->CountChanel;
-		}
 		
+		// зсув для ліній
+		OffsetSum = OffsetSum+sizeof(rgset_chanel)*rp->title->CountChanel;
+		if (rp->title->CountLine != 0)		rp->title->OffsetLine = OffsetSum;
+		else rp->title->OffsetLine = 0;			
+		
+	
 		//зсув для реєстраторів
-		if (rp->title->CountReg !=0){
-			rp->title->OffsetReg = OffsetSum+sizeof(rgset_line)*rp->title->CountLine;
-			OffsetSum =  rp->title->OffsetReg;
-		}
-		else {
-			rp->title->OffsetReg = 0;
-			OffsetSum = OffsetSum+sizeof(rgset_line)*rp->title->CountLine;
-		}
+		OffsetSum = OffsetSum+sizeof(rgset_line)*rp->title->CountLine;
+		if (rp->title->CountReg !=0) rp->title->OffsetReg = OffsetSum;		
+		else 	rp->title->OffsetReg = 0;		
 		
 		//зсув для бінарних сигналів
-		if (rp->title->CountBinSignal !=0){
-			rp->title->OffsetBin = OffsetSum+sizeof(rgset_reg)*rp->title->CountReg;		
-			OffsetSum =  rp->title->OffsetBin;
-		}
-		else {
-			rp->title->OffsetBin = 0;
-			OffsetSum = OffsetSum+sizeof(rgset_reg)*rp->title->CountReg;	
-		}
+		OffsetSum = OffsetSum+sizeof(rgset_reg)*rp->title->CountReg;
+		if (rp->title->CountBinSignal !=0)			rp->title->OffsetBin = OffsetSum;		
+		else 	rp->title->OffsetBin = 0;				
+		
 		
 		//зсув для Mark
-		if (rp->title->CountMarkBinSignal !=0){
-			rp->title->OffsetMark = OffsetSum+sizeBin;		
-			OffsetSum =  rp->title->OffsetMark;
-		}
-		else {
-			rp->title->OffsetMark = 0;
-			OffsetSum=OffsetSum+sizeBin;
-		}
+		OffsetSum=OffsetSum+sizeBin;
+		if (rp->title->CountMarkBinSignal !=0)	rp->title->OffsetMark = OffsetSum;		
+		else rp->title->OffsetMark = 0;
+
 		// зсув для linesect
-		if (rp->title->CountLineSect !=0){
-			rp->title->OffsetLineSect = OffsetSum+sizeof(rgset_mark)*rp->title->CountMarkBinSignal;		
-			OffsetSum =  rp->title->OffsetLineSect;
-		}
-		else {
-			rp->title->OffsetLineSect = 0;
-			OffsetSum=OffsetSum+sizeof(rgset_mark)*rp->title->CountMarkBinSignal;
-		}
+		OffsetSum=OffsetSum+sizeof(rgset_mark)*rp->title->CountMarkBinSignal;
+		if (rp->title->CountLineSect !=0) 	rp->title->OffsetLineSect = OffsetSum;			
+		else rp->title->OffsetLineSect = 0;		
 		
 		//зсув для свіч
-		if (rp->title->CountSwich !=0){
-		rp->title->OffsetSwich = OffsetSum+sizeof(rgset_linesect)*rp->title->CountLineSect;		
-		OffsetSum =  rp->title->OffsetSwich;
-		}
-		else {
-			rp->title->OffsetSwich = 0;
-			OffsetSum= OffsetSum+sizeof(rgset_linesect)*rp->title->CountLineSect;	
-		}
+		OffsetSum= OffsetSum+sizeof(rgset_linesect)*rp->title->CountLineSect;	
+		if (rp->title->CountSwich !=0)		rp->title->OffsetSwich = OffsetSum;	
+		else rp->title->OffsetSwich = 0;
+			
+		// зсув для уставок окружністю
+		OffsetSum=OffsetSum+sizeof(rgset_swich)*rp->title->CountSwich;
+		if(rp->title->CountCircleSettings != 0) 	rp->title->OffsetCircleSettings = OffsetSum;
+		else rp->title->OffsetCircleSettings =0; 
 		
-		rp->title->OffsetAdditTitle=182; // зсув для додаткового заголовку
-		rp->title->OffsetCircleSettings=0;
-		rp->title->OffsetTableSettings=0;
+		//зсув для уставок таблицею
+		OffsetSum=OffsetSum+sizeof(rgset_circleset)*rp->title->CountCircleSettings;
+		if(rp->title->CountTableSettings != 0) 	rp->title->OffsetTableSettings = OffsetSum;
+		else rp->title->OffsetTableSettings =0; 
+	
+
 		rp->title->OffsetTransmisChanel=0;
 		rp->title->OffsetAutotransformer=0;
 		rp->title->OffsetRelationsLineReg=0;
+		rp->title->OffsetAdditTitle=182; // зсув для додаткового заголовку
 		rp->title->OffsetSpesifLineProtection=0;
 		rp->title->OffsetSpecifStageProtection=0;
 		rp->title->OffsetAdditSpecifChanel=0;
@@ -483,23 +476,14 @@ int rgsetUnit(rgset* rp) { /* НЕ РЕАЛІЗОВАНО */
 		rp->title->ReservOffset9=0;
 		rp->title->OffsetAdditisData=0;//зсув для додаткових данних
 		prnRgsetTitle(rp);
-		printf( "%d сигналов \n" , array_count(rp->bin));
-		printf("%d байт  ", sizeBin);
+
 	return 0;
 	
 };
 
 int rgsetAddChanel(rgset* rp, int chNumb) { 
 	if (rp->file_descr != 0) rgsetSplit(rp);
-	if (rp->chanel == NULL){
-		rp->chanel = array_new(1, sizeof(rgset_chanel));
-		if (rp->chanel == NULL) {
-			printf("ПОМИЛКА: Пам'ять для нового каналу не виділена\n");
-			return -1;
-			}
-			rp->title->CountChanel = 1;
-	}
-	else {
+	
 	void* tmp = array_add(rp->chanel, chNumb , 1);
 	if (tmp == NULL) {
 		printf("ПОМИЛКА: Пам'ять для нового каналу не виділена\n");
@@ -507,16 +491,13 @@ int rgsetAddChanel(rgset* rp, int chNumb) {
 	};
 	rp->chanel = tmp;
 	rp->title->CountChanel++;
-	}
+	
 	return 0;
 };
 
 int rgsetDelChanel(rgset* rp, int chNumb) { 
 	if (rp->file_descr != 0) rgsetSplit(rp);
-	if (rp->chanel == NULL){
-		printf("ПОМИЛКА: Неможливо видалити (канали відсутні)");
-		return -1;
-		}
+	
 	if (rp->title->CountChanel < 1) {
 		printf("ПОМИЛКА: Неможливо видалити (канали відсутні)\n");
 		return -1;
@@ -584,19 +565,57 @@ rgset* rgsetNew() {
 	}
 	memset((void*)rp->title,0, sizeof(rgset_title));
 	strcpy(rp->title->Version, "21");
+	rgsetSplit(rp);
 return rp;
 };
 
 int rgsetSave(rgset* rp, char* filename) { /* НЕ РЕАЛІЗОВАНО */
+	unsigned int sizeBin = getSizeBin(rp); 
+	void *pointer = malloc(sizeBin);
+	uint16_t tmp = 0;
+	void *tmpointer = pointer;
+	for (int i=0; i < rp->title->CountBinSignal; i++){
+	
+		tmp = strlen(rp->bin[i].Name);
+		*(uint16_t*)tmpointer=tmp;
+		tmpointer=tmpointer+2;
+		memcpy(tmpointer, rp->bin[i].Name, tmp); 
+		tmpointer=tmpointer+tmp;
+		
+		tmp = strlen(rp->bin[i].Panel);
+		*(uint16_t*)tmpointer=tmp;
+		tmpointer=tmpointer+2;
+		memcpy(tmpointer, rp->bin[i].Panel, tmp); 
+		tmpointer=tmpointer+tmp;
+		
+		tmp = strlen(rp->bin[i].Relay);
+		*(uint16_t*)tmpointer=tmp;
+		tmpointer=tmpointer+2;
+		memcpy(tmpointer, rp->bin[i].Relay, tmp); 
+		tmpointer=tmpointer+tmp;
+		
+		memcpy(tmpointer,&rp->bin[i].Numb, 8);
+		//*(uint64_t*)tmpointer=(uint64_t)rp->bin[i].Numb;
+		tmpointer=tmpointer+8;
+	}
+	
+	
 	int fd = open(filename, O_WRONLY|O_CREAT, S_IRWXU);
 	if (fd == -1) {
 	printf("помилка створення або відкриття файлу\n");
 	return -1;
 	}
 	write(fd, rp->title, sizeof(rgset_title));
-	write(fd, rp->chanel, sizeof(rgset_chanel)*rp->title->CountChanel);
-	write(fd, rp->line, sizeof(rgset_line)*rp->title->CountLine);
-	write(fd, rp->reg, sizeof(rgset_reg)*rp->title->CountReg);
+	if (rp->title->CountChanel!=0)	write(fd, rp->chanel, sizeof(rgset_chanel)*rp->title->CountChanel);
+	if (rp->title->CountLine!=0)	write(fd, rp->line, sizeof(rgset_line)*rp->title->CountLine);
+	if (rp->title->CountReg!=0)	write(fd, rp->reg, sizeof(rgset_reg)*rp->title->CountReg);
+	if (rp->title->CountBinSignal!=0)	write(fd, pointer, sizeBin);
+	if (rp->title->CountMarkBinSignal!=0)	write(fd, rp->mark, sizeof(rgset_mark)*rp->title->CountMarkBinSignal);
+	if (rp->title->CountLineSect!=0)	write(fd, rp->linesect, sizeof(rgset_linesect)*rp->title->CountLineSect);
+	if (rp->title->CountSwich!=0)	write(fd, rp->swich, sizeof(rgset_swich)*rp->title->CountSwich);
+	if (rp->title->CountCircleSettings !=0) write(fd, rp->circleset, sizeof(rgset_circleset)*rp->title->CountCircleSettings);
+	if (rp->title->CountTableSettings !=0) 	write (fd, rp->tableset, sizeof(rgset_tableset)*rp->title->CountTableSettings);
+	
 	close (fd);
 	return 1;
 };
