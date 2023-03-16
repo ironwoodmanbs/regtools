@@ -690,6 +690,7 @@ int rgsetSave(rgset* rp, char* filename) { /* НЕ РЕАЛІЗОВАНО */
 	if (rp->title->CountSpecifLineProtection !=0) write (fd, rp->speciflineprotection, sizeof (rgset_speciflineprotection)*rp->title->CountSpecifLineProtection);
 	if (rp->title->CountSpecifStageProtection !=0) write (fd, rp->specifstageprotection, sizeof(rgset_specifstageprotection)*rp->title->CountSpecifStageProtection);
 	if (rp->title->CountChanel != 0) write(fd, rp->additspecifchanel, sizeof(rgset_additspecifchanel)*rp->title->CountChanel);
+	if (rp->title->CountProtectionZoneSectionallyLinear !=0) write (fd, rp->protectionzonesectionallylinear, sizeof(rgset_protectionzonesectionallylinear)*rp->title->CountProtectionZoneSectionallyLinear);
 	close (fd);
 	return 1;
 };
