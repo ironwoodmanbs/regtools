@@ -276,7 +276,7 @@ int prnRgsetAll(rgset* p) {
 		prnRgsetBin(p);
 		prnRgsetMark(p);
 		prnRgsetLineSect(p);
-		prnRgsetSwich(p);
+		//prnRgsetSwich(p);
 	};
 	return 0;
 };
@@ -310,6 +310,13 @@ rgset* rgsetInit(char* file_name) {
 			rp->swich = (rgset_swich*)(rp->title->OffsetSwich+(uintptr_t)rp->title);
 			rp->circleset = (rgset_circleset*)(rp->title->OffsetCircleSettings+(uintptr_t)rp->title);
 			rp->tableset = (rgset_tableset*)(rp->title->OffsetTableSettings+(uintptr_t)rp->title);
+			rp->transmischanel = (rgset_transmischanel*)(rp->title->OffsetTransmisChanel+(uintptr_t)rp->title);
+			rp->autotrans = (rgset_autotrans*)(rp->title->OffsetAutotransformer+(uintptr_t)rp->title);
+			rp->relationslinereg = (rgset_relationslinereg*)(rp->title->OffsetRelationsLineReg + (uintptr_t) rp->title);
+			rp->speciflineprotection=(rgset_speciflineprotection*)(rp->title->OffsetSpesifLineProtection +(uintptr_t) rp->title);
+			rp->specifstageprotection=(rgset_specifstageprotection*)(rp->title->OffsetSpecifStageProtection +(uintptr_t) rp->title);
+			rp->additspecifchanel= (rgset_additspecifchanel*)(rp->title->OffsetAdditSpecifChanel + (uintptr_t) rp->title);
+			rp->protectionzonesectionallylinear =(rgset_protectionzonesectionallylinear*) (rp->title->OffsetProtectionZoneSectionallyLinear+ (uintptr_t) rp->title);
 			return rp;
 		};
 	}
@@ -387,6 +394,41 @@ int rgsetSplit(rgset* rp) {
 	 if(tmp == NULL)  return -1;
 	 memcpy(tmp, rp->tableset, sizeof(rgset_tableset)*rp->title->CountTableSettings);
 	 rp->tableset = tmp;
+	 
+	 tmp = array_new(rp->title->CountTransmisChanel, sizeof(rgset_transmischanel));
+	 if(tmp == NULL)  return -1;
+	 memcpy(tmp, rp->transmischanel, sizeof(rgset_transmischanel)*rp->title->CountTransmisChanel);
+	 rp->transmischanel = tmp;
+	 
+	 tmp = array_new (rp->title->CountAutotransf, sizeof(rgset_autotrans));
+	 if (tmp == NULL) return 0;
+	 memcpy(tmp,rp->autotrans, sizeof(rgset_autotrans)*rp->title->CountAutotransf);
+	 rp->autotrans  = tmp;
+	  
+	  tmp = array_new (rp->title->DeleyExpressInfo, sizeof(rgset_relationslinereg));
+	  if (tmp == NULL) return 0;
+	  memcpy (tmp, rp->relationslinereg, sizeof(rgset_relationslinereg)*rp->title->DeleyExpressInfo);
+	  rp->relationslinereg = tmp;
+	  
+	  tmp = array_new (rp->title->CountSpecifLineProtection, sizeof(rgset_speciflineprotection));
+	  if(tmp==NULL) return 0;
+	  memcpy (tmp, rp->speciflineprotection, sizeof(rgset_speciflineprotection)*rp->title->CountSpecifLineProtection);
+	  rp->speciflineprotection = tmp;
+	  
+	  tmp = array_new (rp->title->CountSpecifStageProtection, sizeof(rgset_specifstageprotection));
+	  if(tmp==NULL) return 0;
+	  memcpy (tmp, rp->specifstageprotection, sizeof(rgset_specifstageprotection)*rp->title->CountSpecifStageProtection);
+	  rp->specifstageprotection= tmp;
+	  
+	  tmp = array_new (rp->title->CountChanel, sizeof(rgset_additspecifchanel)*rp->title->CountChanel);
+	  if(tmp==NULL) return 0;
+	  memcpy (tmp, rp->additspecifchanel, sizeof(rgset_additspecifchanel)*rp->title->CountChanel);
+	  rp->additspecifchanel = tmp;
+	  
+	  tmp = array_new (rp->title->CountProtectionZoneSectionallyLinear, sizeof(rgset_protectionzonesectionallylinear)*rp->title->CountProtectionZoneSectionallyLinear);
+	  if(tmp==NULL) return 0;
+	  memcpy (tmp, rp->protectionzonesectionallylinear, sizeof(rgset_protectionzonesectionallylinear)*rp->title->CountProtectionZoneSectionallyLinear);
+	  rp->protectionzonesectionallylinear = tmp;
 	  
 	 file_close(rp);
 	rp->file_descr = 0;
@@ -453,16 +495,43 @@ int rgsetUnit(rgset* rp) {
 		OffsetSum=OffsetSum+sizeof(rgset_circleset)*rp->title->CountCircleSettings;
 		if(rp->title->CountTableSettings != 0) 	rp->title->OffsetTableSettings = OffsetSum;
 		else rp->title->OffsetTableSettings =0; 
+		
+		// зсув для каналів передачі
+		OffsetSum=OffsetSum+sizeof(rgset_tableset)*rp->title->CountTableSettings;
+		if (rp->title->CountTransmisChanel != 0) rp->title->OffsetTransmisChanel = OffsetSum;
+		else rp->title->OffsetTransmisChanel = 0;
+		
+		// зсув для автотрансформаторів
+		OffsetSum=OffsetSum+sizeof(rgset_transmischanel)*rp->title->CountTransmisChanel;
+		if (rp->title->CountAutotransf != 0) rp-> title-> OffsetAutotransformer = OffsetSum;
+		else rp->title->OffsetAutotransformer = 0;
+		
+		// зсув для звязку ліній-реєстратор
+		OffsetSum=OffsetSum+sizeof(rgset_autotrans)*rp->title->CountAutotransf;
+		if (rp->title->DeleyExpressInfo!=0) rp->title->OffsetRelationsLineReg = OffsetSum;
+		else rp->title->OffsetRelationsLineReg = 0;
 	
-
-		rp->title->OffsetTransmisChanel=0;
-		rp->title->OffsetAutotransformer=0;
-		rp->title->OffsetRelationsLineReg=0;
 		rp->title->OffsetAdditTitle=182; // зсув для додаткового заголовку
-		rp->title->OffsetSpesifLineProtection=0;
-		rp->title->OffsetSpecifStageProtection=0;
-		rp->title->OffsetAdditSpecifChanel=0;
-		rp->title->OffsetProtectionZoneSectionallyLinear=0;
+		
+		// зсув для опису захисту ліній
+		OffsetSum=OffsetSum+sizeof(rgset_relationslinereg)*rp->title->DeleyExpressInfo;
+		if (rp->title->CountSpecifLineProtection!= 0) rp->title->OffsetSpesifLineProtection= OffsetSum;
+		else rp->title->OffsetSpesifLineProtection=0;
+		
+		//зсув для опису ступенів захисту
+		OffsetSum=OffsetSum+sizeof(rgset_speciflineprotection)*rp->title->CountSpecifLineProtection;
+		if (rp->title->CountSpecifStageProtection!=0) rp->title-> OffsetSpecifStageProtection = OffsetSum;
+		else rp->title->OffsetSpecifStageProtection=0;
+		
+		//зсув для додаткового опису каналів
+		OffsetSum=OffsetSum+sizeof(rgset_specifstageprotection)*rp->title->CountSpecifStageProtection;
+		if(rp->title->CountChanel != 0) rp->title-> OffsetAdditSpecifChanel = OffsetSum;
+		else rp->title->OffsetAdditSpecifChanel=0;
+		
+		//зсув для зон захисту кусочно-лінійних
+		OffsetSum=OffsetSum+sizeof(rgset_additspecifchanel)*rp->title->CountChanel;
+		if(rp->title->CountProtectionZoneSectionallyLinear !=0) rp->title->OffsetProtectionZoneSectionallyLinear = OffsetSum;
+		else rp->title->OffsetProtectionZoneSectionallyLinear=0;
 		
 		// зсув для резервів
 		rp->title->ReservOffset1=0;
@@ -595,7 +664,7 @@ int rgsetSave(rgset* rp, char* filename) { /* НЕ РЕАЛІЗОВАНО */
 		tmpointer=tmpointer+tmp;
 		
 		memcpy(tmpointer,&rp->bin[i].Numb, 8);
-		//*(uint64_t*)tmpointer=(uint64_t)rp->bin[i].Numb;
+		
 		tmpointer=tmpointer+8;
 	}
 	
@@ -615,7 +684,12 @@ int rgsetSave(rgset* rp, char* filename) { /* НЕ РЕАЛІЗОВАНО */
 	if (rp->title->CountSwich!=0)	write(fd, rp->swich, sizeof(rgset_swich)*rp->title->CountSwich);
 	if (rp->title->CountCircleSettings !=0) write(fd, rp->circleset, sizeof(rgset_circleset)*rp->title->CountCircleSettings);
 	if (rp->title->CountTableSettings !=0) 	write (fd, rp->tableset, sizeof(rgset_tableset)*rp->title->CountTableSettings);
-	
+	if (rp->title->CountTransmisChanel !=0) write(fd, rp->transmischanel, sizeof(rgset_transmischanel)*rp->title->CountTransmisChanel);
+	if (rp->title->CountAutotransf != 0 ) write(fd, rp->autotrans, sizeof(rgset_autotrans)*rp->title->CountAutotransf);
+	if (rp->title->DeleyExpressInfo !=0) write (fd,rp->relationslinereg, sizeof (rgset_relationslinereg)*rp->title->DeleyExpressInfo);
+	if (rp->title->CountSpecifLineProtection !=0) write (fd, rp->speciflineprotection, sizeof (rgset_speciflineprotection)*rp->title->CountSpecifLineProtection);
+	if (rp->title->CountSpecifStageProtection !=0) write (fd, rp->specifstageprotection, sizeof(rgset_specifstageprotection)*rp->title->CountSpecifStageProtection);
+	if (rp->title->CountChanel != 0) write(fd, rp->additspecifchanel, sizeof(rgset_additspecifchanel)*rp->title->CountChanel);
 	close (fd);
 	return 1;
 };
