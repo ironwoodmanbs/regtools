@@ -273,7 +273,23 @@ typedef struct rgset_tableset {
 } rgset_tableset;
 
 typedef struct rgset_transmischanel {
-    char Void[46];
+    char Name[32];			 										// 0-31
+    uint16_t BaseAddress; 										// 32-33
+    uint16_t TypeChanel;											//34-35
+    uint16_t TransmissionSpeed;							//36-37
+	char Void [4];														 //38-41
+    uint16_t Flags; 													 //42-43
+    uint16_t  ObjectIdentifier;							   		 //44-45
+    uint16_t  RecipientIdentifier; 							 //46-47
+    uint16_t  CallCount;											 //48-49
+    uint16_t ConnectionTimeAfterPickingupTube; //50-51	
+    uint16_t ConnectingTimeAfterDialing; 			//52-53
+    uint16_t CountConnectionAttempt; 				//54-55
+    char NumberPhone [79];  									//56-134
+    char Void1 [1]; 													//135
+    char InitializationString [63];		 						//136-198
+    char Void2[9];														//199-207
+    
     } rgset_transmischanel;
     
 typedef struct rgset_autotrans {
@@ -289,7 +305,7 @@ typedef struct rgset_relationslinereg {
     char Void[5];
     } rgset_relationslinereg;
 
-typedef struct rgset_specifprotection {
+typedef struct rgset_speciflineprotection {
     char FullName[40];
     char Name[16];
     uint16_t LineNumb;
@@ -315,19 +331,20 @@ typedef struct rgset_specifprotection {
     float AnalogSet7;
     float AnalogSet8;
     char void6[8];
-    } rgset_specifprotection;
+    } rgset_speciflineprotection;
 
 typedef struct rgset_specifstageprotection {
-    uint16_t NumSpesif;
-    uint16_t NumProtectStage;
-    char Void[4];
-    uint16_t NumBinary;
-    float TimeOperation;
-    uint32_t SensitivUp;
-    uint32_t SensitivDown;
-    char Void2[32];
-    float threshold;
-    char Void3[6];
+    //uint16_t NumSpesif;
+    //uint16_t NumProtectStage;
+    //char Void[4];
+    //uint16_t NumBinary;
+    //float TimeOperation;
+    //uint32_t SensitivUp;
+    //uint32_t SensitivDown;
+    //char Void2[32];
+    //float threshold;
+    //char Void3[6];
+    char Void [94];
     } rgset_specifstageprotection;
 
 typedef struct rgset_additspecifchanel {
@@ -396,6 +413,14 @@ typedef struct rgset{
 	rgset_swich* swich;
 	rgset_circleset* circleset;
 	rgset_tableset* tableset;
+	rgset_transmischanel*  transmischanel;
+	rgset_autotrans*  autotrans;
+	rgset_relationslinereg* relationslinereg; 
+	rgset_speciflineprotection*  speciflineprotection;
+	rgset_specifstageprotection* specifstageprotection;
+	rgset_additspecifchanel* additspecifchanel;
+	rgset_protectionzonesectionallylinear* protectionzonesectionallylinear;
+	
 } rgset;
 
 typedef struct binNum {
@@ -414,7 +439,6 @@ void init_bin_arr(uint16_t* source, rgset_bin* dest, int count); // Протот
 int prnRgsetMark(rgset* p); // Прототип функции вывода типов дискретных сигналов из данных rgset.dat
 int prnRgsetLineSect(rgset* p); // Прототип функции вывода участков линий из данных rgset.dat
 int prnRgsetSwich(rgset* p); // Прототип вывода выключателей из данных rgset.dat
-int prnRgsetCircleset(rgset* p); // Прототип вывода уставок окружностью из данных rgset.dat
 int prnRgsetAll(rgset* p); // Прототип функции вывода всех полей rgset
 
 rgset* rgsetInit(char* filename);
